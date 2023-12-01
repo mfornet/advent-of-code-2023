@@ -24,6 +24,9 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 
 ---
 
+<details>
+<summary>Template readme</summary>
+
 ## Template setup
 
 This template supports all major OS (macOS, Linux, Windows).
@@ -240,3 +243,4 @@ Do you have aoc-specific crate recommendations? [Share them!](https://github.com
 
 [^5]:
     <img alt="Inspect debugger state" src="https://user-images.githubusercontent.com/1682504/198838373-36df6996-23bf-4757-9335-0bc4c1db0276.png" width="450" />
+</details>
