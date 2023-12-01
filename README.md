@@ -1,6 +1,6 @@
 <img src="./.assets/christmas_ferris.png" width="164">
 
-# 🎄 Advent of Code {year}
+# 🎄 Advent of Code 2023
 
 Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/).
 
@@ -12,6 +12,14 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 | [Day 1](https://adventofcode.com/2023/day/1) | ⭐ | ⭐ |
 <!--- advent_readme_stars table --->
 
+<!--- benchmarking table --->
+## Benchmarks
+
+| Day | Part 1 | Part 2 |
+| :---: | :---: | :---:  |
+| [Day 1](./src/bin/01.rs) | `456.4µs` | `273.8µs` |
+
+**Total: 0.73ms**
 <!--- benchmarking table --->
 
 ---
@@ -62,7 +70,7 @@ Every [solution](https://github.com/fspoettel/advent-of-code-rust/blob/main/src/
 
 ### Download input & description for a day
 
-> [!IMPORTANT] 
+> [!IMPORTANT]
 > This command requires [installing the aoc-cli crate](#configure-aoc-cli-integration).
 
 ```sh
