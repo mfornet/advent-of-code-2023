@@ -28,9 +28,9 @@ pub fn part_one(input: &str) -> Option<u32> {
                 let y0 = number.start().saturating_sub(1);
                 let y1 = std::cmp::min(width, number.end() + 1);
 
-                for x in x0..x1 {
+                for row in board.iter().take(x1).skip(x0) {
                     for y in y0..y1 {
-                        let cell = board[x][y..y + 1].chars().next().unwrap();
+                        let cell = row[y..y + 1].chars().next().unwrap();
                         if !matches!(cell, '.' | '0'..='9') {
                             let number = number.as_str().parse::<u32>().unwrap();
                             return Some(number);
@@ -68,10 +68,9 @@ pub fn part_two(input: &str) -> Option<u32> {
                 let y0 = number.start().saturating_sub(1);
                 let y1 = std::cmp::min(width, number.end() + 1);
 
-                for x in x0..x1 {
+                for (x, row) in board.iter().enumerate().take(x1).skip(x0) {
                     for y in y0..y1 {
-                        let cell = board[x][y..y + 1].chars().next().unwrap();
-                        if cell == '*' {
+                        if &row[y..y + 1] == "*" {
                             acc.entry((x, y))
                                 .or_default()
                                 .push(number.as_str().parse::<u32>().unwrap());

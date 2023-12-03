@@ -47,7 +47,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                         acc
                     })
                     .values()
-                    .fold(1, |acc, v| acc * v)
+                    .product::<u32>()
             })
             .sum(),
     )
