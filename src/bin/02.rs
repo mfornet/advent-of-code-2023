@@ -9,9 +9,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         input
             .lines()
             .filter_map(|line| {
-                let [head, rounds] =
-                    TryInto::<[&str; 2]>::try_into(line.split(':').collect::<Vec<_>>().as_slice())
-                        .unwrap();
+                let (head, rounds) = line.split_once(':').unwrap();
 
                 let game_id = head.split(' ').last().unwrap().parse::<u32>().unwrap();
                 rounds
@@ -41,10 +39,7 @@ pub fn part_two(input: &str) -> Option<u32> {
                     .split(';')
                     .flat_map(|round| round.split(','))
                     .fold(HashMap::new(), |mut acc, round| {
-                        let [amount, color] = TryInto::<[&str; 2]>::try_into(
-                            round.trim_start_matches(' ').split(' ').collect::<Vec<_>>(),
-                        )
-                        .unwrap();
+                        let (amount, color) = round.trim().split_once(' ').unwrap();
                         let amount = amount.parse::<u32>().unwrap();
                         acc.entry(color)
                             .and_modify(|e| *e = std::cmp::max(*e, amount))
