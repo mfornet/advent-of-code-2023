@@ -43,30 +43,44 @@ pub fn part_one(input: &str) -> Option<u32> {
     )
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    let mut interval_end = vec![0];
+struct State {
+    total: u32,
+    copies: u32,
+    interval_end: Vec<u32>,
+}
 
+impl State {
+    fn new() -> Self {
+        Self {
+            total: 0,
+            copies: 1,
+            interval_end: vec![],
+        }
+    }
+}
+
+pub fn part_two(input: &str) -> Option<u32> {
     Some(
         input
             .lines()
             .enumerate()
-            .fold((0, 1), |(mut total, mut copies), (i, line)| {
+            .fold(State::new(), |mut state, (i, line)| {
                 let cur = line.parse::<ScratchPad>().unwrap().0 as usize;
-                total += copies;
+                state.total += state.copies;
 
-                if interval_end.len() <= i + cur {
-                    interval_end.resize(i + cur + 1, 0);
+                if state.interval_end.len() <= i + cur {
+                    state.interval_end.resize(i + cur + 1, 0);
                 }
 
                 if cur > 0 {
-                    interval_end[i + cur] += copies;
-                    copies += copies;
+                    state.interval_end[i + cur] += state.copies;
+                    state.copies += state.copies;
                 }
-                copies -= interval_end[i];
+                state.copies -= state.interval_end[i];
 
-                (total, copies)
+                state
             })
-            .0,
+            .total,
     )
 }
 
