@@ -17,3 +17,4 @@ test_lib = []
 pico-args = "0.5.0"
 regex = "1.10.2"
 aho-corasick = "1.1.2"
+itertools = "0.12.0"
