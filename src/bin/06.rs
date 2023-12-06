@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 advent_of_code::solution!(6);
 
 fn parse(line: &str) -> impl Iterator<Item = u64> + '_ {
@@ -28,9 +30,7 @@ fn solve(time: u64, distance: u64) -> u64 {
 }
 
 pub fn part_one(input: &str) -> Option<u64> {
-    let mut lines = input.lines();
-    let time = parse(lines.next().unwrap());
-    let distance = parse(lines.next().unwrap());
+    let (time, distance) = input.lines().map(parse).next_tuple().unwrap();
 
     Some(
         time.zip(distance)
@@ -45,9 +45,7 @@ fn parse_two(line: &str) -> u64 {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let mut lines = input.lines().map(parse_two);
-    let t = lines.next().unwrap();
-    let d = lines.next().unwrap();
+    let (t, d) = input.lines().map(parse_two).next_tuple().unwrap();
     Some(solve(t, d))
 }
 

@@ -65,13 +65,11 @@ impl FromStr for MapRange {
                 .trim_start_matches('\n')
                 .split('\n')
                 .map(|ranges| {
-                    let mut numbers = ranges
+                    let (dst, src, len) = ranges
                         .split_ascii_whitespace()
-                        .map(|s| s.parse::<u64>().unwrap());
-
-                    let dst = numbers.next().unwrap();
-                    let src = numbers.next().unwrap();
-                    let len = numbers.next().unwrap();
+                        .map(|s| s.parse::<u64>().unwrap())
+                        .next_tuple()
+                        .unwrap();
 
                     (src, (dst, len))
                 })
@@ -116,8 +114,7 @@ pub fn part_two(input: &str) -> Option<u64> {
         .chunks(2)
         .into_iter()
         .map(|mut c| {
-            let start = c.next().unwrap();
-            let len = c.next().unwrap();
+            let (start, len) = c.next_tuple().unwrap();
             (start, start + len)
         })
         .collect::<Vec<_>>();
