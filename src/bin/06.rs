@@ -41,13 +41,13 @@ pub fn part_one(input: &str) -> Option<u64> {
 
 fn parse_two(line: &str) -> u64 {
     let (_, numbers) = line.split_once(':').unwrap();
-    numbers.replace(" ", "").parse::<u64>().unwrap()
+    numbers.replace(' ', "").parse::<u64>().unwrap()
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let mut lines = input.lines();
-    let t = parse_two(lines.next().unwrap());
-    let d = parse_two(lines.next().unwrap());
+    let mut lines = input.lines().map(parse_two);
+    let t = lines.next().unwrap();
+    let d = lines.next().unwrap();
     Some(solve(t, d))
 }
 
