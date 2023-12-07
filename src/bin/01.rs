@@ -9,9 +9,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         input
             .lines()
             .map(|line| {
-                let mut it = line
-                    .chars()
-                    .filter_map(|c| c.to_string().parse::<u32>().ok());
+                let mut it = line.chars().filter_map(|c| c.to_digit(10));
                 let first = it.next().unwrap();
                 let last = it.last().unwrap_or(first);
                 first * 10 + last
