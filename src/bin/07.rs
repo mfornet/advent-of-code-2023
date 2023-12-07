@@ -67,25 +67,20 @@ fn parse(s: &str, joker: bool) -> Hand {
             'T' => 10,
             _ => card.to_digit(10).unwrap(),
         })
-        .collect::<Vec<_>>();
+        .collect();
     Hand::new(cards)
 }
 
 fn solve(input: &str, joker: bool) -> Option<u64> {
-    let mut hands = input
-        .lines()
-        .map(|line| {
-            let (hand, bid) = line.split_once(' ').unwrap();
-            let bid = bid.parse::<u64>().unwrap();
-            (parse(hand, joker), bid)
-        })
-        .collect::<Vec<_>>();
-
-    hands.sort_unstable_by(|a, b| a.0.cmp(&b.0));
-
     Some(
-        hands
-            .into_iter()
+        input
+            .lines()
+            .map(|line| {
+                let (hand, bid) = line.split_once(' ').unwrap();
+                let bid = bid.parse::<u64>().unwrap();
+                (parse(hand, joker), bid)
+            })
+            .sorted_unstable_by(|a, b| a.0.cmp(&b.0))
             .enumerate()
             .map(|(i, (_, bid))| (i as u64 + 1) * bid)
             .sum::<u64>(),
