@@ -2,36 +2,6 @@ use itertools::Itertools;
 
 advent_of_code::solution!(11);
 
-struct FenwickTree {
-    tree: Vec<usize>,
-}
-
-impl FenwickTree {
-    fn new(size: usize) -> Self {
-        Self {
-            tree: vec![0; size + 1],
-        }
-    }
-
-    fn add(&mut self, index: usize, value: usize) {
-        let mut i = index + 1;
-        while i < self.tree.len() {
-            self.tree[i] += value;
-            i += i & (!i + 1);
-        }
-    }
-
-    fn sum(&self, index: usize) -> usize {
-        let mut i = index + 1;
-        let mut sum = 0;
-        while i > 0 {
-            sum += self.tree[i];
-            i -= i & (!i + 1);
-        }
-        sum
-    }
-}
-
 pub fn solve(input: &str, expansion: usize) -> usize {
     let galaxy_map = input
         .lines()
@@ -41,20 +11,8 @@ pub fn solve(input: &str, expansion: usize) -> usize {
     let n = galaxy_map.len();
     let m = galaxy_map[0].len();
 
-    let mut rows = FenwickTree::new(n);
-    let mut cols = FenwickTree::new(m);
-
-    for i in 0..n {
-        if !galaxy_map[i].iter().any(|&x| x) {
-            rows.add(i, 1);
-        }
-    }
-
-    for j in 0..m {
-        if !galaxy_map.iter().map(|row| row[j]).any(|x| x) {
-            cols.add(j, 1);
-        }
-    }
+    let mut rows = vec![1; n];
+    let mut cols = vec![1; m];
 
     let mut locations = vec![];
 
@@ -62,8 +20,18 @@ pub fn solve(input: &str, expansion: usize) -> usize {
         for j in 0..m {
             if galaxy_map[i][j] {
                 locations.push((i, j));
+                rows[i] = 0;
+                cols[j] = 0;
             }
         }
+    }
+
+    for i in 1..n {
+        rows[i] += rows[i - 1];
+    }
+
+    for i in 1..m {
+        cols[i] += cols[i - 1];
     }
 
     let mut answer = 0;
@@ -75,8 +43,8 @@ pub fn solve(input: &str, expansion: usize) -> usize {
             let yh = std::cmp::max(y0, y1);
             let yl = std::cmp::min(y0, y1);
 
-            answer += xh - xl + yh - yl
-                + (rows.sum(xh) - rows.sum(xl) + cols.sum(yh) - cols.sum(yl)) * (expansion - 1);
+            answer +=
+                xh - xl + yh - yl + (rows[xh] - rows[xl] + cols[yh] - cols[yl]) * (expansion - 1);
         }
     }
     answer
