@@ -64,61 +64,25 @@ fn build_graph(input: &str) -> (Graph, (usize, usize)) {
     let mut start = None;
 
     for (i, j) in (0..n).cartesian_product(0..m) {
-        match board[i][j] {
-            '|' => {
-                if i + 1 < n {
-                    graph[i][j].push((i + 1, j));
-                }
-                if i > 0 {
-                    graph[i][j].push((i - 1, j));
-                }
-            }
-            '-' => {
-                if j + 1 < m {
-                    graph[i][j].push((i, j + 1));
-                }
-                if j > 0 {
-                    graph[i][j].push((i, j - 1));
-                }
-            }
-            'L' => {
-                if j + 1 < m {
-                    graph[i][j].push((i, j + 1));
-                }
-                if i > 0 {
-                    graph[i][j].push((i - 1, j));
-                }
-            }
-            'J' => {
-                if j > 0 {
-                    graph[i][j].push((i, j - 1));
-                }
-                if i > 0 {
-                    graph[i][j].push((i - 1, j));
-                }
-            }
-            '7' => {
-                if j > 0 {
-                    graph[i][j].push((i, j - 1));
-                }
-                if i + 1 < n {
-                    graph[i][j].push((i + 1, j));
-                }
-            }
-            'F' => {
-                if j + 1 < m {
-                    graph[i][j].push((i, j + 1));
-                }
-                if i + 1 < n {
-                    graph[i][j].push((i + 1, j));
-                }
-            }
-            'S' => {
-                assert!(start.is_none());
-                start = Some((i, j));
-            }
-            '.' => {}
-            _ => unreachable!(),
+        if i + 1 < n && matches!(board[i][j], '|' | '7' | 'F') {
+            graph[i][j].push((i + 1, j));
+        }
+
+        if i > 0 && matches!(board[i][j], '|' | 'L' | 'J') {
+            graph[i][j].push((i - 1, j));
+        }
+
+        if j + 1 < m && matches!(board[i][j], '-' | 'L' | 'F') {
+            graph[i][j].push((i, j + 1));
+        }
+
+        if j > 0 && matches!(board[i][j], '-' | 'J' | '7') {
+            graph[i][j].push((i, j - 1));
+        }
+
+        if board[i][j] == 'S' {
+            assert!(start.is_none());
+            start = Some((i, j));
         }
     }
 
@@ -191,35 +155,25 @@ pub fn part_two(input: &str) -> Option<u32> {
                 let up = has_up(x, y);
                 let down = has_down(x, y);
 
-                if up && down {
-                    assert!(last.is_none());
-                    wind ^= 1;
-                } else if down {
-                    match last {
-                        None => {
-                            last = Some(WindDir::Down);
-                        }
-                        Some(WindDir::Up) => {
-                            wind ^= 1;
-                            last = None;
-                        }
-                        Some(WindDir::Down) => {
-                            last = None;
-                        }
+                match (up, down, last) {
+                    (true, true, None) => {
+                        last = None;
+                        wind ^= 1;
                     }
-                } else if up {
-                    match last {
-                        None => {
-                            last = Some(WindDir::Up);
-                        }
-                        Some(WindDir::Down) => {
-                            wind ^= 1;
-                            last = None;
-                        }
-                        Some(WindDir::Up) => {
-                            last = None;
-                        }
+                    (false, true, None) => last = Some(WindDir::Down),
+                    (false, true, Some(WindDir::Up)) => {
+                        wind ^= 1;
+                        last = None;
                     }
+                    (false, true, Some(WindDir::Down)) => last = None,
+                    (true, false, None) => last = Some(WindDir::Up),
+                    (true, false, Some(WindDir::Down)) => {
+                        wind ^= 1;
+                        last = None;
+                    }
+                    (true, false, Some(WindDir::Up)) => last = None,
+                    (false, false, prev) => last = prev,
+                    _ => unreachable!(),
                 }
             } else {
                 answer += wind;
