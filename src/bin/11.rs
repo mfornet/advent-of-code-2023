@@ -16,12 +16,12 @@ pub fn solve(input: &str, expansion: usize) -> usize {
 
     let mut locations = vec![];
 
-    for i in 0..n {
-        for j in 0..m {
+    for (i, row) in rows.iter_mut().enumerate() {
+        for (j, col) in cols.iter_mut().enumerate() {
             if galaxy_map[i][j] {
                 locations.push((i, j));
-                rows[i] = 0;
-                cols[j] = 0;
+                *row = 0;
+                *col = 0;
             }
         }
     }
