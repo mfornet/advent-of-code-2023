@@ -42,8 +42,8 @@ pub fn part_one(input: &str) -> Option<usize> {
                     .collect_vec();
                 let (row, col) = find_reflection(&pattern);
                 assert_eq!(row.len() + col.len(), 1);
-                100 * row.get(0).copied().unwrap_or_default()
-                    + col.get(0).copied().unwrap_or_default()
+                100 * row.first().copied().unwrap_or_default()
+                    + col.first().copied().unwrap_or_default()
             })
             .sum::<usize>(),
     )
@@ -77,8 +77,8 @@ pub fn part_two(input: &str) -> Option<usize> {
                     let n_col = n_col.into_iter().filter(|x| !col.contains(x)).collect_vec();
 
                     if !n_row.is_empty() || !n_col.is_empty() {
-                        return 100 * n_row.get(0).copied().unwrap_or_default()
-                            + n_col.get(0).copied().unwrap_or_default();
+                        return 100 * n_row.first().copied().unwrap_or_default()
+                            + n_col.first().copied().unwrap_or_default();
                     }
 
                     match pattern[i][j] {
