@@ -1,24 +1,9 @@
 use std::collections::VecDeque;
 
+use advent_of_code::Direction;
 use itertools::Itertools;
-use num_enum::IntoPrimitive;
 
 advent_of_code::solution!(16);
-
-#[derive(IntoPrimitive, Clone, Copy, Debug)]
-#[repr(u8)]
-enum Direction {
-    Up,
-    Left,
-    Down,
-    Right,
-}
-
-impl Direction {
-    fn index(&self) -> usize {
-        Into::<u8>::into(*self) as usize
-    }
-}
 
 struct BoundingBox {
     n: isize,

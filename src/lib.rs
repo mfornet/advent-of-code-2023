@@ -2,6 +2,7 @@ mod day;
 pub mod template;
 
 pub use day::*;
+use num_enum::IntoPrimitive;
 
 pub struct NoCompare<T>(pub T);
 
@@ -36,5 +37,38 @@ impl<T> PartialOrd for NoCompare<T> {
 impl<T> Ord for NoCompare<T> {
     fn cmp(&self, _: &Self) -> std::cmp::Ordering {
         std::cmp::Ordering::Equal
+    }
+}
+
+#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug, IntoPrimitive)]
+#[repr(u8)]
+pub enum Direction {
+    Up,
+    Left,
+    Down,
+    Right,
+}
+
+impl Direction {
+    pub fn opposite(&self) -> Self {
+        match self {
+            Self::Up => Self::Down,
+            Self::Left => Self::Right,
+            Self::Down => Self::Up,
+            Self::Right => Self::Left,
+        }
+    }
+
+    pub fn all() -> &'static [(Self, (isize, isize))] {
+        &[
+            (Self::Up, (-1, 0)),
+            (Self::Left, (0, -1)),
+            (Self::Down, (1, 0)),
+            (Self::Right, (0, 1)),
+        ]
+    }
+
+    pub fn index(&self) -> usize {
+        Into::<u8>::into(*self) as usize
     }
 }

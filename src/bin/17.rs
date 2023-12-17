@@ -1,37 +1,8 @@
-use std::{cmp::Reverse, collections::HashMap};
-
-use advent_of_code::NoCompare;
+use advent_of_code::{Direction, NoCompare};
 use itertools::Itertools;
+use std::cmp::Reverse;
 
 advent_of_code::solution!(17);
-
-#[derive(Hash, Eq, PartialEq, Clone, Copy, Debug)]
-enum Direction {
-    Up,
-    Left,
-    Down,
-    Right,
-}
-
-impl Direction {
-    fn opposite(&self) -> Self {
-        match self {
-            Self::Up => Self::Down,
-            Self::Left => Self::Right,
-            Self::Down => Self::Up,
-            Self::Right => Self::Left,
-        }
-    }
-
-    fn all() -> &'static [(Self, (isize, isize))] {
-        &[
-            (Self::Up, (-1, 0)),
-            (Self::Left, (0, -1)),
-            (Self::Down, (1, 0)),
-            (Self::Right, (0, 1)),
-        ]
-    }
-}
 
 #[derive(Hash, Eq, PartialEq, Clone, Debug)]
 struct State {
@@ -44,7 +15,8 @@ struct State {
 pub fn solve(board: &[Vec<u32>], minimum: usize, maximum: usize) -> u32 {
     let n = board.len();
     let m = board[0].len();
-    let mut distance = HashMap::new();
+
+    let mut distance = vec![vec![vec![vec![u32::MAX; 4]; maximum + 1]; m]; n];
     let mut heap = std::collections::BinaryHeap::new();
 
     for dir in [Direction::Right, Direction::Down] {
@@ -54,21 +26,21 @@ pub fn solve(board: &[Vec<u32>], minimum: usize, maximum: usize) -> u32 {
             remaining: maximum,
             dir,
         };
-        distance.insert(state.clone(), 0);
+        distance[0][0][maximum][dir.index()] = 0;
         heap.push(Reverse((0, NoCompare(state))));
     }
 
     while let Some(Reverse((d, NoCompare(state)))) = heap.pop() {
-        if distance[&state] < d {
-            continue;
-        }
-
         let State {
             pos: (x, y),
             required,
             remaining,
             dir,
         } = state;
+
+        if distance[x][y][remaining][dir.index()] < d {
+            continue;
+        }
 
         if x == n - 1 && y == m - 1 && required == 0 {
             return d;
@@ -112,10 +84,8 @@ pub fn solve(board: &[Vec<u32>], minimum: usize, maximum: usize) -> u32 {
             };
 
             if let Some(n_state) = n_state {
-                let entry = distance.entry(n_state.clone()).or_insert(std::u32::MAX);
-
-                if nd < *entry {
-                    *entry = nd;
+                if nd < distance[nx][ny][n_state.remaining][n_state.dir.index()] {
+                    distance[nx][ny][n_state.remaining][n_state.dir.index()] = nd;
                     heap.push(Reverse((nd, NoCompare(n_state))));
                 }
             }
