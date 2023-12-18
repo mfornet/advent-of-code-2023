@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-
 use advent_of_code::Direction;
 use itertools::Itertools;
 
@@ -37,21 +35,26 @@ impl BoundingBox {
     }
 }
 
-fn next_dirs(cell: char, dir: Direction) -> Vec<Direction> {
+fn next_dirs(cell: char, dir: Direction) -> &'static [Direction] {
     match (cell, dir) {
-        ('.', dir) => vec![dir],
-        ('|', Direction::Down | Direction::Up) => vec![dir],
-        ('|', Direction::Left | Direction::Right) => vec![Direction::Up, Direction::Down],
-        ('-', Direction::Down | Direction::Up) => vec![Direction::Right, Direction::Left],
-        ('-', Direction::Left | Direction::Right) => vec![dir],
-        ('\\', Direction::Down) => vec![Direction::Right],
-        ('\\', Direction::Up) => vec![Direction::Left],
-        ('\\', Direction::Left) => vec![Direction::Up],
-        ('\\', Direction::Right) => vec![Direction::Down],
-        ('/', Direction::Down) => vec![Direction::Left],
-        ('/', Direction::Up) => vec![Direction::Right],
-        ('/', Direction::Left) => vec![Direction::Down],
-        ('/', Direction::Right) => vec![Direction::Up],
+        ('.' | '|', Direction::Up) => &[Direction::Up],
+        ('\\', Direction::Left) => &[Direction::Up],
+        ('/', Direction::Right) => &[Direction::Up],
+
+        ('.' | '|', Direction::Down) => &[Direction::Down],
+        ('\\', Direction::Right) => &[Direction::Down],
+        ('/', Direction::Left) => &[Direction::Down],
+
+        ('.' | '-', Direction::Left) => &[Direction::Left],
+        ('\\', Direction::Up) => &[Direction::Left],
+        ('/', Direction::Down) => &[Direction::Left],
+
+        ('.' | '-', Direction::Right) => &[Direction::Right],
+        ('\\', Direction::Down) => &[Direction::Right],
+        ('/', Direction::Up) => &[Direction::Right],
+
+        ('|', Direction::Left | Direction::Right) => &[Direction::Up, Direction::Down],
+        ('-', Direction::Down | Direction::Up) => &[Direction::Right, Direction::Left],
         _ => unreachable!(),
     }
 }
@@ -63,21 +66,21 @@ fn covered(board: &[Vec<char>], start: ((usize, usize), Direction)) -> usize {
     let bbox = BoundingBox::new(n, m);
 
     let mut seen = vec![vec![vec![false; 4]; m]; n];
-    let mut queue = VecDeque::new();
+    let mut queue = Vec::with_capacity(4 * m * n);
 
     let ((x, y), dir) = start;
 
     for dir in next_dirs(board[x][y], dir) {
         seen[x][y][dir.index()] = true;
-        queue.push_back(((x, y), dir));
+        queue.push(((x, y), dir));
     }
 
-    while let Some(((x, y), dir)) = queue.pop_front() {
-        if let Some((nx, ny)) = bbox.next((x, y), dir) {
-            for ndir in next_dirs(board[nx][ny], dir) {
+    while let Some(((x, y), dir)) = queue.pop() {
+        if let Some((nx, ny)) = bbox.next((x, y), *dir) {
+            for ndir in next_dirs(board[nx][ny], *dir) {
                 if !seen[nx][ny][ndir.index()] {
                     seen[nx][ny][ndir.index()] = true;
-                    queue.push_back(((nx, ny), ndir));
+                    queue.push(((nx, ny), ndir));
                 }
             }
         }
