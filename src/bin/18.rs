@@ -6,14 +6,13 @@ advent_of_code::solution!(18);
 #[derive(Default, Debug)]
 struct State {
     last_point: Point,
-    corners: i64,
     perimeter: i64,
     area: i64,
 }
 
 impl State {
     fn area(&self) -> i64 {
-        -self.area / 2 + self.perimeter / 2 - self.corners / 2 + 1
+        -self.area / 2 + self.perimeter / 2 + 1
     }
 }
 
@@ -36,8 +35,7 @@ fn apply_state(mut state: State, step: (Direction, i64)) -> State {
 
     state.area += partial_area;
     state.last_point = n_point;
-    state.perimeter += distance + 1;
-    state.corners += 1;
+    state.perimeter += distance;
 
     state
 }
