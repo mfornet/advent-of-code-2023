@@ -71,4 +71,45 @@ impl Direction {
     pub fn index(&self) -> usize {
         Into::<u8>::into(*self) as usize
     }
+
+    pub fn vector(&self) -> Point {
+        match self {
+            Self::Up => Point { x: 0, y: -1 },
+            Self::Left => Point { x: -1, y: 0 },
+            Self::Down => Point { x: 0, y: 1 },
+            Self::Right => Point { x: 1, y: 0 },
+        }
+    }
+}
+
+#[derive(Default, Clone, Copy, Debug)]
+pub struct Point {
+    pub x: i64,
+    pub y: i64,
+}
+
+pub fn cross(a: &Point, b: &Point) -> i64 {
+    a.x * b.y - a.y * b.x
+}
+
+impl std::ops::Mul<i64> for Point {
+    type Output = Self;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+        }
+    }
+}
+
+impl std::ops::Add<Point> for Point {
+    type Output = Self;
+
+    fn add(self, rhs: Point) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+        }
+    }
 }
