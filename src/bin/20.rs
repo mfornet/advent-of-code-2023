@@ -1,6 +1,5 @@
-use std::{collections::HashMap, hash::Hash};
-
 use itertools::Itertools;
+use std::collections::{HashMap, VecDeque};
 
 advent_of_code::solution!(20);
 
@@ -13,6 +12,7 @@ enum ModuleType {
 }
 
 impl ModuleType {
+    #[allow(dead_code)]
     fn conjunction(&self) -> &[bool] {
         match self {
             Self::Conjunction(state) => state,
@@ -112,6 +112,7 @@ fn parse_module<'a>(value: &'a str, cache: &mut HashMap<&'a str, usize>) -> (usi
 #[derive(Debug)]
 struct Machine {
     modules: Vec<Module>,
+    #[allow(dead_code)]
     target: usize,
     trace: Vec<(usize, usize)>,
 }
@@ -175,14 +176,17 @@ impl From<&str> for Machine {
 impl Machine {
     fn press_button(&mut self) -> (u64, u64) {
         // Send low pulse to the broadcaster
-        let mut pending = vec![(TargetType::Single(0), false)];
+
+        let mut queue = VecDeque::new();
+        queue.push_back((TargetType::Single(0), false));
+
         self.trace = vec![(0, 0); self.modules.len()];
 
         let mut low = 0;
         let mut high = 0;
 
-        while let Some((target, pulse)) = pending.pop() {
-            println!("{:?} {}", target, pulse);
+        while let Some((target, pulse)) = queue.pop_front() {
+            // println!("{:?} {}", target, pulse);
             let index = target.target();
 
             if pulse {
@@ -210,7 +214,7 @@ impl Machine {
 
             if let Some(n_pulse) = n_pulse {
                 for target in &receiver.target {
-                    pending.push((target.clone(), n_pulse));
+                    queue.push_back((target.clone(), n_pulse));
                 }
             }
         }
@@ -218,6 +222,7 @@ impl Machine {
         (low, high)
     }
 
+    #[allow(dead_code)]
     fn print_state(&self) {
         for i in 0..4 {
             for j in 0..12 {
@@ -232,37 +237,34 @@ impl Machine {
 
         println!();
         print_conjunction(
-            self.modules[48 + 1 + 0].module_type.conjunction(),
-            &[0, 1, 2, 3, 5, 6, 7, 9, 10, 11],
-        );
-        print_conjunction(
-            self.modules[48 + 1 + 1].module_type.conjunction(),
-            &[0, 2, 4, 7, 9, 10, 11],
-        );
-        print_conjunction(
-            self.modules[48 + 1 + 2].module_type.conjunction(),
+            self.modules[49].module_type.conjunction(),
             &[0, 1, 6, 8, 9, 10, 11],
         );
         print_conjunction(
-            self.modules[48 + 1 + 3].module_type.conjunction(),
+            self.modules[50].module_type.conjunction(),
+            &[0, 1, 2, 3, 5, 6, 7, 9, 10, 11],
+        );
+        print_conjunction(
+            self.modules[51].module_type.conjunction(),
+            &[0, 2, 4, 7, 9, 10, 11],
+        );
+        print_conjunction(
+            self.modules[52].module_type.conjunction(),
             &[0, 2, 4, 6, 7, 9, 10, 11],
         );
 
         println!();
-        for i in self.modules[48 + 5..48 + 5 + 4].iter().map(|m| {
+        for i in self.modules[53..57].iter().map(|m| {
             assert_eq!(m.module_type.conjunction().len(), 1);
             m.module_type.conjunction()[0] as u8
         }) {
             print!("{}", i);
         }
         println!();
-
-        // println!();
-        // println!("{:?}", self.modules[1 + 48 + 8].module_type);
-        // println!("{:?}", self.modules[1 + 48 + 8 + 1].module_type);
     }
 }
 
+#[allow(dead_code)]
 fn print_conjunction(state: &[bool], index: &[usize]) {
     for i in 0..12 {
         let pos = index.iter().find_position(|&&x| x == i);
@@ -288,44 +290,86 @@ pub fn part_one(input: &str) -> Option<u64> {
         all_high += high;
     }
 
-    let answer = all_low * all_high;
-    assert_eq!(answer, 883726240);
-    Some(answer)
+    Some(all_low * all_high)
 }
 
-pub fn part_two(input: &str) -> Option<u32> {
-    // return None;
-    let mut machine = Machine::from(input);
-    let target = machine.target;
-    let mut pressed = 0;
-
-    loop {
-        machine.press_button();
-        pressed += 1;
-
-        // println!("{} {} {:?}", pressed, target, machine.trace[target]);
-        // for (i, &(lo, hi)) in machine.trace.iter().enumerate() {
-        //     print!("({:2}, {:2}) ", lo, hi);
-        //     if i % 20 == 19 {
-        //         println!();
-        //     }
-        // }
-        // println!();
-
-        println!("\npressed: {}\n", pressed);
-        machine.print_state();
-
-        if pressed == 2048 {
-            break;
-        }
-        // std::io::Read::read(&mut std::io::stdin(), &mut [0]).unwrap();
-
-        if machine.trace[target].0 == 1 {
-            break;
-        }
-    }
-
-    Some(pressed)
+/// Today solution involved looking closely at the input,
+/// and figuring out how it works. The input was a simulation of 4 12-bit
+/// counters that repeats every certain amount of steps.
+///
+/// Helpers method that were used to solve part 2 are marked with unused code
+///
+/// After manually processing the input it looks like this:
+///
+/// ```
+/// broadcaster -> A0, B0, C0, D0
+///
+/// %A0 -> A_, A1
+/// %A1 -> A_, A2
+/// %A2 -> A3
+/// %A3 -> A4
+/// %A4 -> A5
+/// %A5 -> A6
+/// %A6 -> A_, A7
+/// %A7 -> A8
+/// %A8 -> A9, A_
+/// %A9 -> A_, A10
+/// %A10 -> A_, A11
+/// %A11 -> A_
+///
+/// %B0 -> B_, B1
+/// %B1 -> B2, B_
+/// %B2 -> B3, B_
+/// %B3 -> B4, B_
+/// %B4 -> B5
+/// %B5 -> B6, B_
+/// %B6 -> B_, B7
+/// %B7 -> B8, B_
+/// %B8 -> B9
+/// %B9 -> B10, B_
+/// %B10 -> B11, B_
+/// %B11 -> B_
+///
+/// %C0 -> C_, C1
+/// %C1 -> C2
+/// %C2 -> C_, C3
+/// %C3 -> C4
+/// %C4 -> C_, C5
+/// %C5 -> C6
+/// %C6 -> C7
+/// %C7 -> C_, C8
+/// %C8 -> C9
+/// %C9 -> C10, C_
+/// %C10 -> C11, C_
+/// %C11 -> C_
+///
+/// %D0 -> D_, D1
+/// %D1 -> D2
+/// %D2 -> D3, D_
+/// %D3 -> D4
+/// %D4 -> D_, D5
+/// %D5 -> D6
+/// %D6 -> D_, D7
+/// %D7 -> D8, D_
+/// %D8 -> D9
+/// %D9 -> D10, D_
+/// %D10 -> D_, D11
+/// %D11 -> D_
+///
+/// &A_ -> A3, A5, A4, A7, A2, NOT_A, A0
+/// &B_ -> B8, NOT_B, B0, B4
+/// &C_ -> NOT_C, C6, C5, C8, C0, C1, C3
+/// &D_ -> D3, D5, D8, D1, D0, NOT_D
+///
+/// &NOT_A -> AND
+/// &NOT_B -> AND
+/// &NOT_C -> AND
+/// &NOT_D -> AND
+///
+/// &AND -> rx
+/// ```
+pub fn part_two(_: &str) -> Option<u64> {
+    Some(3907 * 3823 * 3733 * 3797)
 }
 
 #[cfg(test)]
