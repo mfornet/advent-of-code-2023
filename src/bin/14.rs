@@ -1,3 +1,4 @@
+use advent_of_code::RotateInPlace;
 use itertools::Itertools;
 use std::collections::HashMap;
 
@@ -24,18 +25,6 @@ fn tilt_north(board: &mut Vec<Vec<char>>) {
             }
         }
     }
-}
-
-fn rotate_inplace(board: &mut Vec<Vec<char>>, tmp: &mut Vec<Vec<char>>) {
-    let n = board.len();
-
-    for (i, row) in board.iter().enumerate() {
-        for (j, c) in row.iter().enumerate() {
-            tmp[j][n - i - 1] = *c;
-        }
-    }
-
-    std::mem::swap(board, tmp);
 }
 
 fn eval(board: &[Vec<char>]) -> usize {
@@ -76,19 +65,19 @@ pub fn hash_board(board: &[Vec<char>]) -> usize {
 pub fn part_two(input: &str) -> Option<usize> {
     const TARGET: usize = 1_000_000_000;
 
-    let mut board = input
+    let board = input
         .lines()
         .map(|line| line.chars().collect_vec())
         .collect_vec();
 
-    let mut tmp = vec![vec!['.'; board.len()]; board[0].len()];
+    let mut board = RotateInPlace::new(board);
     let mut seen = HashMap::new();
     let mut step = 0;
 
     while step < TARGET {
         for _ in 0..4 {
             tilt_north(&mut board);
-            rotate_inplace(&mut board, &mut tmp);
+            board.rotate();
         }
 
         step += 1;

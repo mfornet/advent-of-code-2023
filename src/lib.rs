@@ -113,3 +113,45 @@ impl std::ops::Add<Point> for Point {
         }
     }
 }
+
+pub struct RotateInPlace<T> {
+    data: Vec<Vec<T>>,
+    tmp: Vec<Vec<T>>,
+}
+
+impl<T: Clone + Default> RotateInPlace<T> {
+    pub fn new(data: Vec<Vec<T>>) -> Self {
+        let n = data.len();
+        let m = data[0].len();
+        Self {
+            data,
+            tmp: vec![vec![T::default(); n]; m],
+        }
+    }
+
+    pub fn rotate(&mut self) {
+        let n = self.data.len();
+
+        for (i, row) in self.data.iter().enumerate() {
+            for (j, c) in row.iter().enumerate() {
+                self.tmp[j][n - i - 1] = c.clone();
+            }
+        }
+
+        std::mem::swap(&mut self.data, &mut self.tmp);
+    }
+}
+
+impl<T> std::ops::Deref for RotateInPlace<T> {
+    type Target = Vec<Vec<T>>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.data
+    }
+}
+
+impl<T> std::ops::DerefMut for RotateInPlace<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.data
+    }
+}
