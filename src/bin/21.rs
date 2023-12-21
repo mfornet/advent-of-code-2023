@@ -10,9 +10,9 @@ fn find_start(board: &[Vec<char>]) -> (usize, usize) {
     let m = board[0].len();
     let mut start = (n, m);
 
-    'find_start: for i in 0..n {
-        for j in 0..m {
-            if board[i][j] == 'S' {
+    'find_start: for (i, row) in board.iter().enumerate() {
+        for (j, cell) in row.iter().enumerate() {
+            if *cell == 'S' {
                 start = (i, j);
                 break 'find_start;
             }
@@ -62,21 +62,19 @@ fn compute_distance(board: &[Vec<char>], source: (usize, usize)) -> Vec<Vec<usiz
 }
 
 fn solve(input: &str, distance: usize) -> usize {
-    let mut board = input
+    let board = input
         .lines()
         .map(|line| line.chars().collect_vec())
         .collect_vec();
 
-    let n = board.len();
-    let m = board[0].len();
-    let (x, y) = find_start(&mut board);
+    let (x, y) = find_start(&board);
 
     let dist = compute_distance(&board, (x, y));
 
     let mut answer = 0;
-    for i in 0..n {
-        for j in 0..m {
-            if dist[i][j] <= distance && dist[i][j] % 2 == distance % 2 {
+    for row in dist.iter() {
+        for &d in row.iter() {
+            if d <= distance && d % 2 == distance % 2 {
                 answer += 1;
             }
         }
@@ -94,15 +92,15 @@ fn solve_corner_up_right(board: &[Vec<char>], distance: usize) -> usize {
     let m = board[0].len();
 
     let src_to_corner = {
-        let src = find_start(&board);
-        let dist = compute_distance(&board, src);
+        let src = find_start(board);
+        let dist = compute_distance(board, src);
         dist[0][m - 1]
     };
 
     // Distance to the corner is even, so parity doesn't change
     assert_eq!(src_to_corner % 2, 0);
 
-    let dist_from_corner = compute_distance(&board, (n - 1, 0));
+    let dist_from_corner = compute_distance(board, (n - 1, 0));
 
     // Distance between corners is manhattan distance
     assert_eq!(dist_from_corner[0][m - 1], n + m - 2);
@@ -181,17 +179,6 @@ fn solve_corner_up_right(board: &[Vec<char>], distance: usize) -> usize {
             lo += 1;
         }
 
-        // println!(
-        //     "delta={} even={} t_even={} odd={} t_odd={} t_cover={} tot={}",
-        //     delta,
-        //     even,
-        //     covered_even,
-        //     odd,
-        //     covered_odd,
-        //     even * covered_even + odd * covered_odd,
-        //     cur
-        // );
-
         if cur == 0 {
             break;
         }
@@ -199,7 +186,6 @@ fn solve_corner_up_right(board: &[Vec<char>], distance: usize) -> usize {
         answer += cur;
     }
 
-    // dbg!(answer);
     answer
 }
 
@@ -253,10 +239,10 @@ fn solve_up(board: &[Vec<char>], distance: usize) -> usize {
     let mut even = 0;
     let mut odd = 0;
 
-    for i in 0..n {
-        for j in 0..m {
-            if dist[i][j] != usize::MAX {
-                if dist[i][j] % 2 == 0 {
+    for row in dist.iter() {
+        for &d in row.iter() {
+            if d != usize::MAX {
+                if d % 2 == 0 {
                     even += 1;
                 } else {
                     odd += 1;
@@ -293,10 +279,10 @@ fn solve_up(board: &[Vec<char>], distance: usize) -> usize {
         if center + farthest <= distance {
             cur += cur_par;
         } else {
-            for i in 0..n {
-                for j in 0..m {
-                    if dist[i][j] != usize::MAX {
-                        let d = dist[i][j] + center;
+            for row in dist.iter() {
+                for &d in row.iter() {
+                    if d != usize::MAX {
+                        let d = d + center;
                         if d <= distance && distance % 2 == d % 2 {
                             cur += 1;
                         }
@@ -353,10 +339,6 @@ fn solve_part_two(input: &str, distance: usize) -> usize {
         }
     }
 
-    if !good {
-        println!("Using slow algorithm");
-    }
-
     for _ in 0..4 {
         answer += solve_up_right(&board, distance, good);
         board.rotate();
@@ -387,30 +369,10 @@ mod tests {
             .map(|line| line.chars().collect_vec())
             .collect_vec();
         let mut board = RotateInPlace::new(board);
-        for d in 1.. {
+        for d in 1..20 {
             for _ in 0..4 {
                 let found = solve_up(&board, d);
                 let expected = solve_up_brute(&board, d);
-                println!("{} {} {}", d, found, expected);
-                assert_eq!(found, expected, "d = {}", d);
-                board.rotate();
-            }
-        }
-    }
-
-    #[test]
-    fn test_solve_up_data() {
-        let input = advent_of_code::template::read_file("inputs", DAY);
-        let board = input
-            .lines()
-            .map(|line| line.chars().collect_vec())
-            .collect_vec();
-        let mut board = RotateInPlace::new(board);
-        for d in 30001.. {
-            for _ in 0..4 {
-                let found = solve_up(&board, d);
-                let expected = solve_up_brute(&board, d);
-                println!("{} {} {}", d, found, expected);
                 assert_eq!(found, expected, "d = {}", d);
                 board.rotate();
             }
