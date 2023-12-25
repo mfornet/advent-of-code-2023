@@ -39,30 +39,33 @@ Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.
 
 | Day | Part 1 | Part 2 |
 | :---: | :---: | :---:  |
-| [Day 1](./src/bin/01.rs) | `32.6µs` | `216.5µs` |
-| [Day 2](./src/bin/02.rs) | `60.5µs` | `51.9µs` |
-| [Day 3](./src/bin/03.rs) | `169.1µs` | `189.7µs` |
-| [Day 4](./src/bin/04.rs) | `175.9µs` | `163.6µs` |
-| [Day 5](./src/bin/05.rs) | `17.6µs` | `40.8µs` |
-| [Day 6](./src/bin/06.rs) | `345.0ns` | `1.1µs` |
-| [Day 7](./src/bin/07.rs) | `271.9µs` | `251.3µs` |
-| [Day 8](./src/bin/08.rs) | `175.2µs` | `1.6ms` |
-| [Day 9](./src/bin/09.rs) | `124.9µs` | `115.7µs` |
-| [Day 10](./src/bin/10.rs) | `916.6µs` | `1.6ms` |
-| [Day 11](./src/bin/11.rs) | `211.7µs` | `199.0µs` |
-| [Day 12](./src/bin/12.rs) | `503.1µs` | `3.8ms` |
-| [Day 13](./src/bin/13.rs) | `154.7µs` | `1.3ms` |
-| [Day 14](./src/bin/14.rs) | `28.5µs` | `27.0ms` |
-| [Day 15](./src/bin/15.rs) | `49.9µs` | `145.6µs` |
-| [Day 16](./src/bin/16.rs) | `329.4µs` | `117.1ms` |
-| [Day 17](./src/bin/17.rs) | `17.5ms` | `59.0ms` |
-| [Day 18](./src/bin/18.rs) | `26.3µs` | `33.7µs` |
-| [Day 19](./src/bin/19.rs) | `173.9µs` | `133.0µs` |
-| [Day 20](./src/bin/20.rs) | `585.1µs` | `16.0ns` |
-| [Day 21](./src/bin/21.rs) | `225.1µs` | `28.0ms` |
-| [Day 22](./src/bin/22.rs) | `306.2µs` | `58.9ms` |
+| [Day 1](./src/bin/01.rs) | `29.2µs` | `209.5µs` |
+| [Day 2](./src/bin/02.rs) | `49.5µs` | `50.8µs` |
+| [Day 3](./src/bin/03.rs) | `164.9µs` | `186.4µs` |
+| [Day 4](./src/bin/04.rs) | `168.9µs` | `165.0µs` |
+| [Day 5](./src/bin/05.rs) | `16.9µs` | `39.7µs` |
+| [Day 6](./src/bin/06.rs) | `306.0ns` | `944.0ns` |
+| [Day 7](./src/bin/07.rs) | `268.8µs` | `238.5µs` |
+| [Day 8](./src/bin/08.rs) | `174.7µs` | `1.6ms` |
+| [Day 9](./src/bin/09.rs) | `118.7µs` | `112.7µs` |
+| [Day 10](./src/bin/10.rs) | `903.4µs` | `1.6ms` |
+| [Day 11](./src/bin/11.rs) | `212.4µs` | `202.4µs` |
+| [Day 12](./src/bin/12.rs) | `517.9µs` | `3.7ms` |
+| [Day 13](./src/bin/13.rs) | `143.2µs` | `1.3ms` |
+| [Day 14](./src/bin/14.rs) | `30.3µs` | `28.2ms` |
+| [Day 15](./src/bin/15.rs) | `50.9µs` | `148.5µs` |
+| [Day 16](./src/bin/16.rs) | `338.7µs` | `113.6ms` |
+| [Day 17](./src/bin/17.rs) | `17.1ms` | `57.6ms` |
+| [Day 18](./src/bin/18.rs) | `26.3µs` | `32.4µs` |
+| [Day 19](./src/bin/19.rs) | `176.3µs` | `126.4µs` |
+| [Day 20](./src/bin/20.rs) | `600.7µs` | `16.0ns` |
+| [Day 21](./src/bin/21.rs) | `203.7µs` | `27.9ms` |
+| [Day 22](./src/bin/22.rs) | `315.1µs` | `56.7ms` |
+| [Day 23](./src/bin/23.rs) | `768.0µs` | `1.2s` |
+| [Day 24](./src/bin/24.rs) | `391.7µs` | `-` |
+| [Day 25](./src/bin/25.rs) | `357.8ms` | `-` |
 
-**Total: 321.88ms**
+**Total: 1874.28ms**
 <!--- benchmarking table --->
 
 ---
