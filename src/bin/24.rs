@@ -290,66 +290,8 @@ impl Variables {
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut top: f64 = 0.;
-
-    let mut state = input
-        .lines()
-        .map(|line| {
-            line.split(" @ ")
-                .map(|point| {
-                    point
-                        .split(",")
-                        .map(|coord| coord.trim_start_matches(' ').parse::<i64>().unwrap() as f64)
-                        .collect_tuple::<(_, _, _)>()
-                        .unwrap()
-                })
-                .collect_tuple::<(_, _)>()
-                .unwrap()
-        })
-        .fold(State::default(), |mut state, (position, direction)| {
-            let (x, y, z) = position;
-            top = top.max(x.abs()).max(y.abs()).max(z.abs());
-            state.positions.push(Point3d::from(position));
-            state.directions.push(Point3d::from(direction));
-            state
-        });
-
-    // top = 1000000000.;
-
-    for position in &mut state.positions {
-        *position = *position * (1. / top);
-    }
-
-    println!("{:?}", state);
-
-    let mut variable = state.init_variable();
-    const LEARNING_RATE: f64 = 7e-6;
-
-    let mut it = 0;
-    let mut mn = f64::MAX;
-    let mut mx = f64::MIN;
-
-    loop {
-        let diff = state.diff(&variable);
-        variable.update(&diff, LEARNING_RATE);
-
-        let loss = state.eval(&variable);
-        let target = variable.position * top;
-        mx = mx.max(target.x + target.y + target.z);
-        mn = mn.min(target.x + target.y + target.z);
-
-        it += 1;
-        if it == 1000000 {
-            println!(
-                "{} -- loss: {} -- {:?} -- {:?} -- ({} {})",
-                it, loss, target, variable.direction, mn, mx
-            );
-            it = 0;
-            mn = f64::MAX;
-            mx = f64::MIN;
-        }
-        assert!(!loss.is_nan());
-    }
+    // TODO: Solved using python. Rewrite in Rust.
+    None
 }
 
 #[cfg(test)]
